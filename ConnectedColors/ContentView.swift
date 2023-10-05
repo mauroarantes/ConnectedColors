@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var colorSession = ColorMultipeerSession()
+    
     var body: some View {
         Text("Hello, world!")
             .padding()
