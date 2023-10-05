@@ -11,6 +11,7 @@
 		06D013A42ACEBADF0075F8E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D013A32ACEBADF0075F8E0 /* ContentView.swift */; };
 		06D013A62ACEBAE00075F8E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06D013A52ACEBAE00075F8E0 /* Assets.xcassets */; };
 		06D013A92ACEBAE00075F8E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06D013A82ACEBAE00075F8E0 /* Preview Assets.xcassets */; };
+		06D013B02ACEBB470075F8E0 /* ColorMultipeerSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D013AF2ACEBB470075F8E0 /* ColorMultipeerSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		06D013A32ACEBADF0075F8E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		06D013A52ACEBAE00075F8E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		06D013A82ACEBAE00075F8E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		06D013AF2ACEBB470075F8E0 /* ColorMultipeerSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMultipeerSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 				06D013A32ACEBADF0075F8E0 /* ContentView.swift */,
 				06D013A52ACEBAE00075F8E0 /* Assets.xcassets */,
 				06D013A72ACEBAE00075F8E0 /* Preview Content */,
+				06D013AF2ACEBB470075F8E0 /* ColorMultipeerSession.swift */,
 			);
 			path = ConnectedColors;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			files = (
 				06D013A42ACEBADF0075F8E0 /* ContentView.swift in Sources */,
 				06D013A22ACEBADF0075F8E0 /* ConnectedColorsApp.swift in Sources */,
+				06D013B02ACEBB470075F8E0 /* ColorMultipeerSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
