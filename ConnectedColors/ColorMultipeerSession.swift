@@ -8,6 +8,10 @@
 import MultipeerConnectivity
 import os
 
+enum NamedColor: String, CaseIterable {
+    case red, green, yellow
+}
+
 class ColorMultipeerSession: NSObject, ObservableObject {
     private let serviceType = "example-color"
     private let myPeerId = MCPeerID(displayName: UIDevice.current.name)
@@ -16,6 +20,7 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     private let session: MCSession
     private let log = Logger()
     @Published var connectedPeers: [MCPeerID] = []
+    @Published var currentColor: NamedColor? = nil
 
     override init() {
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .none)
@@ -35,6 +40,19 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     deinit {
         serviceAdvertiser.stopAdvertisingPeer()
         serviceBrowser.stopBrowsingForPeers()
+    }
+    
+    func send(color: NamedColor) {
+        log.info("sendColor: \(String(describing: color)) to \(self.session.connectedPeers.count) peers")
+        self.currentColor = color
+        
+        if !session.connectedPeers.isEmpty {
+            do {
+                try session.send(color.rawValue.data(using: .utf8)!, toPeers: session.connectedPeers, with: .reliable)
+            } catch {
+                log.error("Error for sending: \(String(describing: error))")
+            }
+        }
     }
 }
 
@@ -73,7 +91,14 @@ extension ColorMultipeerSession: MCSessionDelegate {
     }
 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        log.info("didReceive bytes \(data.count) bytes")
+        if let string = String(data: data, encoding: .utf8), let color = NamedColor(rawValue: string) {
+            log.info("didReceive color \(string)")
+            DispatchQueue.main.async {
+                self.currentColor = color
+            }
+        } else {
+            log.info("didReceive invalid value \(data.count) bytes")
+        }
     }
 
     public func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
