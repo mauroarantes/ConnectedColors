@@ -10,11 +10,12 @@ import os
 
 class ColorMultipeerSession: NSObject, ObservableObject {
     private let serviceType = "example-color"
-private let myPeerId = MCPeerID(displayName: UIDevice.current.name)
-private let serviceAdvertiser: MCNearbyServiceAdvertiser
-private let serviceBrowser: MCNearbyServiceBrowser
-private let session: MCSession
+    private let myPeerId = MCPeerID(displayName: UIDevice.current.name)
+    private let serviceAdvertiser: MCNearbyServiceAdvertiser
+    private let serviceBrowser: MCNearbyServiceBrowser
+    private let session: MCSession
     private let log = Logger()
+    @Published var connectedPeers: [MCPeerID] = []
 
     override init() {
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .none)
@@ -44,6 +45,7 @@ extension ColorMultipeerSession: MCNearbyServiceAdvertiserDelegate {
 
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         log.info("didReceiveInvitationFromPeer \(peerID)")
+        invitationHandler(true, session)
     }
 }
 
@@ -54,6 +56,7 @@ extension ColorMultipeerSession: MCNearbyServiceBrowserDelegate {
 
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         log.info("ServiceBrowser found peer: \(peerID)")
+        browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
@@ -64,6 +67,9 @@ extension ColorMultipeerSession: MCNearbyServiceBrowserDelegate {
 extension ColorMultipeerSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         log.info("peer \(peerID) didChangeState: \(state.rawValue)")
+        DispatchQueue.main.async {
+            self.connectedPeers = session.connectedPeers
+        }
     }
 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
