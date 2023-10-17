@@ -19,8 +19,9 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     private let serviceBrowser: MCNearbyServiceBrowser
     private let session: MCSession
     private let log = Logger()
-    @Published var connectedPeers: [MCPeerID] = []
-    @Published var currentColor: NamedColor? = nil
+    @Published var availablePeers: [MCPeerID] = []
+    @Published var connectedPeers: MCPeerID?
+    @Published var currentColor: NamedColor?
 
     override init() {
         session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .none)
@@ -54,6 +55,10 @@ class ColorMultipeerSession: NSObject, ObservableObject {
             }
         }
     }
+    
+    func connect(peer: MCPeerID) {
+        self.connectedPeers = peer
+    }
 }
 
 extension ColorMultipeerSession: MCNearbyServiceAdvertiserDelegate {
@@ -86,7 +91,7 @@ extension ColorMultipeerSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         log.info("peer \(peerID) didChangeState: \(state.rawValue)")
         DispatchQueue.main.async {
-            self.connectedPeers = session.connectedPeers
+            self.availablePeers = session.connectedPeers
         }
     }
 

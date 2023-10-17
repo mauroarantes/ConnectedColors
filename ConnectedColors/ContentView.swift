@@ -17,12 +17,22 @@ struct ContentView: View {
 
             Divider()
 
-            HStack {
-                ForEach(NamedColor.allCases, id: \.self) { color in
-                    Button(color.rawValue) {
-                        colorSession.send(color: color)
+            VStack {
+                HStack {
+                    ForEach(colorSession.availablePeers, id: \.self) { peer in
+                        Button(peer.displayName) {
+                            colorSession.connect(peer: peer)
+                        }
+                        .padding()
                     }
-                    .padding()
+                }
+                HStack {
+                    ForEach(NamedColor.allCases, id: \.self) { color in
+                        Button(color.rawValue) {
+                            colorSession.send(color: color)
+                        }
+                        .padding()
+                    }
                 }
             }
             Spacer()
