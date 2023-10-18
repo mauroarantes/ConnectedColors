@@ -20,7 +20,7 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     private let session: MCSession
     private let log = Logger()
     @Published var availablePeers: [MCPeerID] = []
-    @Published var connectedPeers: MCPeerID?
+    @Published var connectedPeer: MCPeerID?
     @Published var currentColor: NamedColor?
 
     override init() {
@@ -57,7 +57,7 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     }
     
     func connect(peer: MCPeerID) {
-        self.connectedPeers = peer
+        self.connectedPeer = peer
     }
 }
 

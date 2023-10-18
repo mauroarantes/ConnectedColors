@@ -13,17 +13,21 @@ struct ContentView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("Connected Devices:")
-            Text(String(describing: colorSession.connectedPeers.map(\.displayName)))
+            if let peer = colorSession.connectedPeer {
+                Text(String(describing: peer.displayName))
+            }
 
             Divider()
 
             VStack {
-                HStack {
-                    ForEach(colorSession.availablePeers, id: \.self) { peer in
-                        Button(peer.displayName) {
-                            colorSession.connect(peer: peer)
+                if colorSession.connectedPeer == nil {
+                    HStack {
+                        ForEach(colorSession.availablePeers, id: \.self) { peer in
+                            Button(peer.displayName) {
+                                colorSession.connect(peer: peer)
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
                 HStack {
