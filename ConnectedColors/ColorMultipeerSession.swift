@@ -41,6 +41,7 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     deinit {
         serviceAdvertiser.stopAdvertisingPeer()
         serviceBrowser.stopBrowsingForPeers()
+        session.disconnect()
     }
     
     func send(color: NamedColor) {
@@ -58,6 +59,9 @@ class ColorMultipeerSession: NSObject, ObservableObject {
     
     func connect(peer: MCPeerID) {
         self.connectedPeer = peer
+        serviceBrowser.invitePeer(peer, to: session, withContext: nil, timeout: 10)
+        serviceBrowser.stopBrowsingForPeers()
+        serviceAdvertiser.stopAdvertisingPeer()
     }
 }
 
@@ -69,6 +73,9 @@ extension ColorMultipeerSession: MCNearbyServiceAdvertiserDelegate {
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         log.info("didReceiveInvitationFromPeer \(peerID)")
         invitationHandler(true, session)
+        connectedPeer = peerID
+        serviceBrowser.stopBrowsingForPeers()
+        serviceAdvertiser.stopAdvertisingPeer()
     }
 }
 
@@ -79,20 +86,21 @@ extension ColorMultipeerSession: MCNearbyServiceBrowserDelegate {
 
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         log.info("ServiceBrowser found peer: \(peerID)")
-        browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
+        availablePeers.append(peerID)
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         log.info("ServiceBrowser lost peer: \(peerID)")
+        availablePeers.removeAll { peer in
+            peer == peerID
+        }
+        connectedPeer = nil
     }
 }
 
 extension ColorMultipeerSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         log.info("peer \(peerID) didChangeState: \(state.rawValue)")
-        DispatchQueue.main.async {
-            self.availablePeers = session.connectedPeers
-        }
     }
 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
